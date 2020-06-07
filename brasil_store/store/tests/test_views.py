@@ -52,3 +52,87 @@ class GetAllProductsTest(TestCase):
         serializer = ProductSerializer(product, many=True)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class UpdateSingleProductTest(TestCase):
+    """ Test module for updating an existing product record """
+
+    def setUp(self):
+        self.milk = Product.objects.create(
+            name='Milk', description='Vegan Milk', price=1.89)
+        self.cheese = Product.objects.create(
+            name='Cheese', description='Vegan Cheese', price=1.29)
+        self.valid_payload = {
+            'name': 'Milk',
+            'description': 'Vegan Milk',
+            'price': 1.89,
+        }
+        self.invalid_payload = {
+            'name': '',
+            'description': 'Vegan Milk',
+            'price': 1.89,
+        }
+
+    def test_valid_update_product(self):
+        response = client.put(
+            reverse('get_delete_update_product', kwargs={'pk': self.milk.pk}),
+            data=json.dumps(self.valid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_invalid_update_product(self):
+        response = client.put(
+            reverse('get_delete_update_product', kwargs={'pk': self.cheese.pk}),
+            data=json.dumps(self.invalid_payload),
+            content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+class CreateNewProductTest(TestCase):
+
+    """ Test module for inserting a new product """
+
+    def setUp(self):
+        self.valid_payload = {
+            'name': 'Milk',
+            'description': 'Vegan Milk',
+            'price': 1.89,
+        }
+        self.invalid_payload = {
+            'name': '',
+            'description': 'Vegan Milk',
+            'price': 1.89,
+        }
+
+    def test_create_valid_product(self):
+        response = client.post(
+            reverse('get_post_product'),
+            data=json.dumps(self.valid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_invalid_product(self):
+        response = client.post(
+            reverse('get_post_product'),
+            data=json.dumps(self.invalid_payload),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteSingleProductTest(TestCase):
+    """ Test module for deleting an existing product record """
+
+    def setUp(self):
+        self.milk = Product.objects.create(
+            name='Milk', description='Vegan Milk', price=1.89)
+
+    def test_valid_delete_product(self):
+        response = client.delete(
+            reverse('get_delete_update_product', kwargs={'pk': self.milk.pk}))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_invalid_delete_product(self):
+        response = client.delete(
+            reverse('get_delete_update_product', kwargs={'pk': 30}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
