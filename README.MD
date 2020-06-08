@@ -10,7 +10,7 @@ Go to the project directory and build project container:\
 
 
 To access the endpoints: \
-`http://0.0.0.0:8000/api/v1/product/` \
+`http://0.0.0.0:8000/api/v1/products/` \
 `http://0.0.0.0:8000/api/v1/clients/` \
 `http://0.0.0.0:8000/api/v1/carts/` 
 
