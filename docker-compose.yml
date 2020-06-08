@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    container_name: brasil_store
+    volumes:
+      - .:/brasil_store
+    ports:
+      - "8000:8000"
